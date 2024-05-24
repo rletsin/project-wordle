@@ -10,15 +10,12 @@ import Keyboard from '../Keyboard/Keyboard';
 import { GameStatus, NUM_OF_GUESSES_ALLOWED } from '../../constants';
 import { range } from '../../utils';
 
-// Pick a random word on every pageload.
-const answer = sample(WORDS);
-// To make debugging easier, we'll log the solution in the console.
-console.info({ answer });
-
 function Game() {
+  const [answer, setAnswer] = React.useState(sample(WORDS));
   const [userGuesses, setUserGuesses] = React.useState([]);
   const [gameStatus, setGameStatus] = React.useState(GameStatus.playing);
   const [isGameOver, setIsGameOver] = React.useState(false);
+  console.info({ answer });
 
   function handleAddNewGuess(guess) {
     const newGuess = {
@@ -33,7 +30,6 @@ function Game() {
   }
 
   function checkGameStatus(attempts, lastGuess) {
-    console.info(attempts, lastGuess)
     if (answer === lastGuess) {
       setGameStatus(GameStatus.win);
       setIsGameOver(true);
@@ -41,6 +37,13 @@ function Game() {
       setGameStatus(GameStatus.lost);
       setIsGameOver(true);
     }
+  }
+
+  function handleGameRestart() {
+    setUserGuesses([]);
+    setGameStatus(GameStatus.playing);
+    setIsGameOver(false);
+    setAnswer(sample(WORDS));
   }
 
   return (
@@ -58,7 +61,8 @@ function Game() {
       <Banner
         gameStatus={gameStatus}
         numOfAttempts={userGuesses.length}
-        answer={answer} />
+        answer={answer}
+        onGameRestart={handleGameRestart} />
     </>
   );
 }

@@ -2,11 +2,13 @@ import React from 'react';
 
 import { sample } from '../../utils';
 import { WORDS } from '../../data';
-import GuessInput from '../GuessInput/GuessInput';
+import GuessInput from '../GuessInput';
 import Guess from '../Guess';
 import Banner from '../Banner';
 import { checkGuess } from '../../game-helpers';
 import Keyboard from '../Keyboard/Keyboard';
+import { GameStatus, NUM_OF_GUESSES_ALLOWED } from '../../constants';
+import { range } from '../../utils';
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
@@ -25,16 +27,18 @@ function Game() {
       id: crypto.randomUUID(),
     };
     const updatedGuesses = [...userGuesses, newGuess];
-    setUserGuesses(updatedGuesses);
+
     checkGameStatus(updatedGuesses.length, guess);
+    setUserGuesses(updatedGuesses);
   }
 
   function checkGameStatus(attempts, lastGuess) {
-    if (attempts >= NUM_OF_GUESSES_ALLOWED) {
-      setGameStatus(GameStatus.lost);
-      setIsGameOver(true);
-    } else if (answer === lastGuess) {
+    console.info(attempts, lastGuess)
+    if (answer === lastGuess) {
       setGameStatus(GameStatus.win);
+      setIsGameOver(true);
+    } else if (attempts >= NUM_OF_GUESSES_ALLOWED) {
+      setGameStatus(GameStatus.lost);
       setIsGameOver(true);
     }
   }
